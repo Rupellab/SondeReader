@@ -1,5 +1,28 @@
-<h1>Paramètres</h1>
+<h1 class="md-display-1">Paramètres</h1>
 
-<p>Hello there.</p>
+<md-input-container>
+    <label>Adresse du serveur Domoticz</label>
+    <input type="url"
+           ng-model="settings.url">
+</md-input-container>
+
+<md-checkbox ng-model="settings.authNeeded"
+             aria-label="Le serveur nécessite une authentification.">
+    Le serveur nécessite une authentification.
+</md-checkbox>
+
+<section ng-if="settings.authNeeded">
+    <md-input-container>
+        <label>Nom d'utilisateur</label>
+        <input type="text"
+               ng-model="settings.user">
+    </md-input-container>
+
+    <md-input-container>
+        <label>Mot de passe</label>
+        <input type="password"
+               ng-model="settings.password">
+    </md-input-container>
+</section>
 
 <p><a ui-sref="home">Retour à l'accueil</a></p>

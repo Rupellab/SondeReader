@@ -23,7 +23,7 @@
 
         $stateProvider.state('settings', {
             url: '/settings',
-            controller: 'TestController',
+            controller: 'SettingsController',
             templateUrl: 'partials/settings.html'
         });
 
@@ -32,5 +32,9 @@
 
     app.controller('TestController', ['$scope', function (self) {
         self.hello = 'World';
+    }]);
+
+    app.controller('SettingsController', ['$scope', function (self) {
+        self.settings = {};
     }]);
 }(angular));
