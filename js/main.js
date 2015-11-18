@@ -4,9 +4,16 @@
 (function (ng) {
     'use strict';
 
-    var app = ng.module('SondeReader', [
+    var // Constants
+        LS_KEY_URL = 'serverUrl',
+
+        // Variables
+        app;
+
+    app = ng.module('SondeReader', [
         'ui.router',
-        'ngMaterial'
+        'ngMaterial',
+        'angular-locker'
     ]);
 
     app.config(['$stateProvider', '$urlRouterProvider', function (
@@ -34,7 +41,41 @@
         self.hello = 'World';
     }]);
 
-    app.controller('SettingsController', ['$scope', function (self) {
-        self.settings = {};
+    app.controller('SettingsController', ['$scope', 'SettingsService', function (
+        self,
+        SettingsService
+    ) {
+        self.settings = {
+            url: SettingsService.getServerUrl()
+        };
+
+        self.$watch('settings.url', function (newValue) {
+            SettingsService.setServerUrl(newValue);
+        });
+    }]);
+
+    app.factory('SettingsService', ['locker', function (locker) {
+        var // Variables
+            serverUrl,
+
+            // Functions
+            setServerUrl,
+            getServerUrl;
+
+        setServerUrl = function (newUrl) {
+            locker.put(LS_KEY_URL, newUrl);
+            serverUrl = newUrl;
+        };
+
+        getServerUrl = function () {
+            return serverUrl;
+        };
+
+        serverUrl = locker.get(LS_KEY_URL, null);
+
+        return {
+            setServerUrl: setServerUrl,
+            getServerUrl: getServerUrl
+        };
     }]);
 }(angular));
