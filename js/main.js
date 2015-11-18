@@ -68,7 +68,13 @@
         };
 
         getServerUrl = function () {
-            return serverUrl;
+            var out = serverUrl;
+
+            if (serverUrl.slice(-1) !== '/') {
+                out += '/';
+            }
+
+            return out;
         };
 
         serverUrl = locker.get(LS_KEY_URL, null);
