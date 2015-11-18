@@ -1,0 +1,37 @@
+<h2>Sonde Météo</h2>
+
+<md-list>
+    <md-list-item>
+        <img src="http://lorempixel.com/150/150/"
+             alt=""
+             class="md-avatar"/>
+
+        <div class="md-list-item-text">
+            <p><strong>Température de l'air :</strong> 16 °C</p>
+
+            <p><strong>Humidité ambiante :</strong> 20 %</p>
+
+            <p><strong>Pression atmosphérique :</strong> 1024 hpa</p>
+        </div>
+    </md-list-item>
+</md-list>
+
+<md-divider></md-divider>
+
+<h2>Sondes Arrosage</h2>
+
+<md-list>
+    <md-list-item ng-repeat="x in [1, 2, 3, 4]">
+        <img src="http://lorempixel.com/151/151/"
+             alt=""
+             class="md-avatar"/>
+
+        <div class="md-list-item-text">
+            <p><strong>Humidité de la terre :</strong> 70 %</p>
+
+            <p><strong>Arrosage en cours :</strong> Non</p>
+
+            <md-button class="md-secondary md-raised">Lancer l'arrosage</md-button>
+        </div>
+    </md-list-item>
+</md-list>
