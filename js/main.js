@@ -20,11 +20,9 @@
         $stateProvider,
         $urlRouterProvider
     ) {
-        console.log('setting routes');
-
         $stateProvider.state('home', {
             url: '/home',
-            controller: 'TestController',
+            controller: 'HomeController',
             templateUrl: 'partials/home.html'
         });
 
@@ -37,8 +35,14 @@
         $urlRouterProvider.otherwise('/home');
     }]);
 
-    app.controller('TestController', ['$scope', function (self) {
-        self.hello = 'World';
+    app.controller('HomeController', ['$scope', 'DataService', function (self, DataService) {
+        DataService.getHumidity().then(function onSuccess(r) {
+            self.humidity = r;
+        });
+
+        DataService.getMeteo().then(function onSuccess(r) {
+            self.meteo = r;
+        });
     }]);
 
     app.controller('SettingsController', ['$scope', 'SettingsService', function (
@@ -82,6 +86,76 @@
         return {
             setServerUrl: setServerUrl,
             getServerUrl: getServerUrl
+        };
+    }]);
+
+    app.factory('DataService', ['$http', '$mdToast', 'SettingsService', function (
+        $http,
+        $mdToast,
+        SettingsService
+    ) {
+        var // Functions
+            getUrl = SettingsService.getServerUrl,
+            getMeteo,
+            getHumidity;
+
+        getMeteo = function () {
+            return $http({
+                method: 'GET',
+                url: getUrl() + 'json.htm',
+                params: {
+                    type: 'devices'
+                }
+            }).then(function onSuccess(r) {
+                var out = [];
+
+                r.data.result.forEach(function (device) {
+                    if (device.hasOwnProperty('Humidity') &&
+                            device.hasOwnProperty('Barometer') &&
+                            device.hasOwnProperty('Temp')) {
+                        out.push({
+                            id: parseInt(device.idx, 10),
+                            humidity: parseInt(device.Humidity, 10),
+                            temp: parseInt(device.Temp, 10),
+                            pressure: parseInt(device.Barometer, 10)
+                        });
+                    }
+                });
+
+                return out;
+            }, function onError() {
+                $mdToast.showSimple('Impossible de récupérer les données !');
+            });
+        };
+
+        getHumidity = function () {
+            return $http({
+                method: 'GET',
+                url: getUrl() + 'json.htm',
+                params: {
+                    type: 'devices'
+                }
+            }).then(function onSuccess(r) {
+                var out = [];
+
+                r.data.result.forEach(function (device) {
+                    if (device.hasOwnProperty('Humidity')) {
+                        out.push({
+                            id: parseInt(device.idx, 10),
+                            humidity: parseInt(device.Humidity, 10)
+                        });
+                    }
+                });
+
+                return out;
+            }, function onError() {
+                $mdToast.showSimple('Impossible de récupérer les données !');
+            });
+        };
+
+        return {
+            getMeteo: getMeteo,
+            getHumidity: getHumidity
         };
     }]);
 }(angular));
