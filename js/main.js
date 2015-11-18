@@ -74,6 +74,10 @@
         getServerUrl = function () {
             var out = serverUrl;
 
+            if (!out) {
+                return 'http://server.url';
+            }
+
             if (serverUrl.slice(-1) !== '/') {
                 out += '/';
             }
