@@ -1,0 +1,23 @@
+{
+  "name": "sonde-reader",
+  "version": "0.0.1",
+  "description": "Application web, adaptée mobile, pour lire les informations renvoyées par des sondes.",
+  "main": "index.html",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Rupellab/sonde-reader.git"
+  },
+  "author": "Rupellab",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Rupellab/sonde-reader/issues"
+  },
+  "homepage": "https://github.com/Rupellab/sonde-reader#readme",
+  "devDependencies": {
+    "gulp": "^3.9.0",
+    "gulp-connect": "^2.2.0"
+  }
+}
