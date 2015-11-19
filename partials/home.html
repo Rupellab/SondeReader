@@ -5,6 +5,14 @@
     </div>
 </md-toolbar>
 
+<p>
+    <strong>Dernière actualisation :</strong>
+    {{ getLastRefresh() | date:'shortTime' }}
+
+    <md-button ng-click="refresh()"
+               class="md-secondary md-raised">Rafraichir</md-button>
+</p>
+
 <h2 class="md-headline">Sonde Météo</h2>
 
 <md-list>
