@@ -6,6 +6,7 @@
 
     var // Constants
         LS_KEY_URL = 'serverUrl',
+        REFRESH_INTERVAL = 60 * 2 * 1000, // 2 minutes
 
         // Variables
         app;
@@ -35,8 +36,9 @@
         $urlRouterProvider.otherwise('/home');
     }]);
 
-    app.controller('HomeController', ['$scope', '$mdToast', 'DataService', function (
+    app.controller('HomeController', ['$scope', '$interval', '$mdToast', 'DataService', function (
         self,
+        $interval,
         $mdToast,
         DataService
     ) {
@@ -61,7 +63,9 @@
             });
         };
 
+        $interval(refresh, REFRESH_INTERVAL);
         getNeeded();
+
         self.getLastRefresh = DataService.getLastRefresh;
         self.refresh = refresh;
     }]);
