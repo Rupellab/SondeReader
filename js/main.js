@@ -67,6 +67,7 @@
         getNeeded();
 
         self.getLastRefresh = DataService.getLastRefresh;
+        self.setWaterSwitch = DataService.setWaterSwitch;
         self.refresh = refresh;
     }]);
 
@@ -126,6 +127,7 @@
     ) {
         var // Variables
             allData = null,
+            switches = [],
             lastRefresh,
 
             // Functions
@@ -134,7 +136,8 @@
             getData,
             getMeteo,
             getHumidity,
-            getLastRefresh;
+            getLastRefresh,
+            setWaterSwitch;
 
         getData = function () {
             var deferred = $q.defer();
@@ -213,11 +216,38 @@
             return lastRefresh;
         };
 
+        setWaterSwitch = function (bool) {
+            $http({
+                method: 'GET',
+                url: getUrl() + 'json.htm',
+                params: {
+                    type: 'command',
+                    param: 'switchlight',
+                    idx: switches[0],
+                    switchcmd: bool ? 'On' : 'Off'
+                }
+            });
+        };
+
+        $http({
+            method: 'GET',
+            url: getUrl() + 'json.htm',
+            params: {
+                type: 'command',
+                param: 'getlightswitches'
+            }
+        }).then(function (r) {
+            r.data.result.forEach(function (waterSwitch) {
+                switches.push(waterSwitch.idx);
+            });
+        });
+
         return {
             refreshData: refreshData,
             getMeteo: getMeteo,
             getHumidity: getHumidity,
-            getLastRefresh: getLastRefresh
+            getLastRefresh: getLastRefresh,
+            setWaterSwitch: setWaterSwitch
         };
     }]);
 }(angular));

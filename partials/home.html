@@ -41,12 +41,16 @@
              alt=""
              class="md-avatar"/>
 
-        <div class="md-list-item-text">
+        <div class="md-list-item-text"
+             ng-init="current = false">
             <p><strong>Humidité de la terre :</strong> {{ h.humidity }} %</p>
 
             <p><strong>Arrosage en cours :</strong> Non</p>
 
-            <md-button class="md-secondary md-raised">Lancer l'arrosage</md-button>
+            <md-button class="md-secondary md-raised"
+                       ng-click="setWaterSwitch(current = !current)">
+                Lancer/arrêter l'arrosage
+            </md-button>
         </div>
     </md-list-item>
 </md-list>
