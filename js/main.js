@@ -90,6 +90,7 @@
 
         if (self.settings.hasAuth) {
             ng.extend(self.settings, SettingsService.getAuth());
+        }
 
         self.$watch('settings.url', function (newValue) {
             SettingsService.setServerUrl(newValue);
