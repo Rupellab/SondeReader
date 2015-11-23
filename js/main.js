@@ -76,7 +76,6 @@
         getNeeded();
 
         self.getLastRefresh = DataService.getLastRefresh;
-        self.setWaterSwitch = DataService.setWaterSwitch;
         self.refresh = refresh;
     }]);
 
@@ -119,8 +118,8 @@
         });
     }]);
 
-    app.controller('DetailController', ['$scope', function (self) {
-        ng.noop(self);
+    app.controller('DetailController', ['$scope', 'DataService', function (self, DataService) {
+        self.setWaterSwitch = DataService.setWaterSwitch;
     }]);
 
     app.factory('SettingsService', ['locker', function (locker) {
