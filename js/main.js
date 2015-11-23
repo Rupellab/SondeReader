@@ -1,12 +1,15 @@
 /*jslint indent: 4, maxlen: 100 */
-/*global angular */
+/*globals angular, window */
 
 (function (ng) {
     'use strict';
 
     var // Constants
         LS_KEY_URL = 'serverUrl',
-        REFRESH_INTERVAL = 60 * 2 * 1000, // 2 minutes
+        LS_KEY_HAS_AUTH = 'hasAuth',
+        LS_KEY_USERNAME = 'authUsername',
+        LS_KEY_PASSWORD = 'authPassword',
+        REFRESH_INTERVAL = 20 * 1000, // Every 20 seconds
 
         // Variables
         app;
@@ -76,21 +79,50 @@
         SettingsService
     ) {
         self.settings = {
-            url: SettingsService.getServerUrl()
+            url: SettingsService.getServerUrl(),
+            hasAuth: SettingsService.getAuth().hasAuth
         };
+
+        if (self.settings.hasAuth) {
+            ng.extend(self.settings, SettingsService.getAuth());
 
         self.$watch('settings.url', function (newValue) {
             SettingsService.setServerUrl(newValue);
+        });
+
+        self.$watch('settings.hasAuth', function (newValue) {
+            if (!newValue) {
+                SettingsService.setAuth({
+                    hasAuth: false
+                });
+            }
+        });
+
+        self.$watch('[settings.username, settings.password]', function (newValues) {
+            if (!newValues) {
+                return;
+            }
+
+            if (self.settings.hasAuth) {
+                SettingsService.setAuth({
+                    hasAuth: true,
+                    username: newValues[0],
+                    password: newValues[1]
+                });
+            }
         });
     }]);
 
     app.factory('SettingsService', ['locker', function (locker) {
         var // Variables
             serverUrl,
+            auth,
 
             // Functions
             setServerUrl,
-            getServerUrl;
+            getServerUrl,
+            setAuth,
+            getAuth;
 
         setServerUrl = function (newUrl) {
             locker.put(LS_KEY_URL, newUrl);
@@ -111,11 +143,36 @@
             return out;
         };
 
+        setAuth = function (authObj) {
+            locker.put(LS_KEY_HAS_AUTH, !!authObj.hasAuth);
+
+            if (authObj.hasAuth) {
+                locker.put(LS_KEY_USERNAME, authObj.username);
+                locker.put(LS_KEY_PASSWORD, authObj.password);
+            }
+
+            auth = authObj;
+        };
+
+        getAuth = function () {
+            return auth;
+        };
+
         serverUrl = locker.get(LS_KEY_URL, null);
+        auth = {
+            hasAuth: locker.get(LS_KEY_HAS_AUTH, false)
+        };
+
+        if (auth.hasAuth) {
+            auth.username = locker.get(LS_KEY_USERNAME, null);
+            auth.password = locker.get(LS_KEY_PASSWORD, null);
+        }
 
         return {
             setServerUrl: setServerUrl,
-            getServerUrl: getServerUrl
+            getServerUrl: getServerUrl,
+            setAuth: setAuth,
+            getAuth: getAuth
         };
     }]);
 
@@ -132,12 +189,26 @@
 
             // Functions
             getUrl = SettingsService.getServerUrl,
+            generateHeaders,
             refreshData,
             getData,
             getMeteo,
             getHumidity,
             getLastRefresh,
             setWaterSwitch;
+
+        generateHeaders = function () {
+            if (SettingsService.getAuth().hasAuth) {
+                return {
+                    Authorization: 'Basic ' + window.btoa(
+                        SettingsService.getAuth().username + ':' +
+                            SettingsService.getAuth().password
+                    )
+                };
+            }
+
+            return {};
+        };
 
         getData = function () {
             var deferred = $q.defer();
@@ -160,6 +231,7 @@
             $http({
                 method: 'GET',
                 url: getUrl() + 'json.htm',
+                headers: generateHeaders(),
                 params: {
                     type: 'devices'
                 }
@@ -172,6 +244,8 @@
                 lastRefresh = Date.now();
 
                 r.data.result.forEach(function (device) {
+                    //console.log('devices', Object.keys(device));
+
                     if (device.hasOwnProperty('Humidity') &&
                             device.hasOwnProperty('Barometer') &&
                             device.hasOwnProperty('Temp')) {
@@ -220,6 +294,7 @@
             $http({
                 method: 'GET',
                 url: getUrl() + 'json.htm',
+                headers: generateHeaders(),
                 params: {
                     type: 'command',
                     param: 'switchlight',
@@ -232,6 +307,7 @@
         $http({
             method: 'GET',
             url: getUrl() + 'json.htm',
+            headers: generateHeaders(),
             params: {
                 type: 'command',
                 param: 'getlightswitches'

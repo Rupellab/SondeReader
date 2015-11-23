@@ -6,16 +6,16 @@
            ng-model="settings.url">
 </md-input-container>
 
-<md-checkbox ng-model="settings.authNeeded"
+<md-checkbox ng-model="settings.hasAuth"
              aria-label="Le serveur nécessite une authentification.">
     Le serveur nécessite une authentification.
 </md-checkbox>
 
-<section ng-if="settings.authNeeded">
+<section ng-if="settings.hasAuth">
     <md-input-container>
         <label>Nom d'utilisateur</label>
         <input type="text"
-               ng-model="settings.user">
+               ng-model="settings.username">
     </md-input-container>
 
     <md-input-container>
