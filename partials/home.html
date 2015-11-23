@@ -7,7 +7,7 @@
 
 <p>
     <strong>Dernière actualisation :</strong>
-    {{ getLastRefresh() | date:'shortTime' }}
+    {{ getLastRefresh() | date:'mediumTime' }}
 
     <md-button ng-click="refresh()"
                class="md-secondary md-raised">Rafraichir</md-button>
@@ -27,6 +27,11 @@
             <p><strong>Humidité ambiante :</strong> {{ m.humidity }} %</p>
 
             <p><strong>Pression atmosphérique :</strong> {{ m.pressure }} hpa</p>
+
+            <md-button class="md-raised md-secondary"
+                       ui-sref="detail({sondeId: m.id})">
+                Détails
+            </md-button>
         </div>
     </md-list-item>
 </md-list>
@@ -52,10 +57,8 @@
             </p>
 
             <md-button class="md-raised md-secondary"
-                       ng-class="{'md-primary': current}"
-                       ng-click="setWaterSwitch(current = !current)">
-                <span ng-if="!current">Lancer l'arrosage</span>
-                <span ng-if="current">Arrêter l'arrosage</span>
+                       ui-sref="detail({sondeId: h.id})">
+                Détails
             </md-button>
         </div>
     </md-list-item>

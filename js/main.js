@@ -36,6 +36,12 @@
             templateUrl: 'partials/settings.html'
         });
 
+        $stateProvider.state('detail', {
+            url: '/detail/:sondeId',
+            controller: 'DetailController',
+            templateUrl: 'partials/detail.html'
+        });
+
         $urlRouterProvider.otherwise('/home');
     }]);
 
@@ -62,7 +68,7 @@
         refresh = function () {
             DataService.refreshData().then(function () {
                 getNeeded();
-                $mdToast.showSimple('Données rafraichies.');
+                $mdToast.showSimple('Données rafraîchies');
             });
         };
 
@@ -111,6 +117,10 @@
                 });
             }
         });
+    }]);
+
+    app.controller('DetailController', ['$scope', function (self) {
+        ng.noop(self);
     }]);
 
     app.factory('SettingsService', ['locker', function (locker) {
@@ -255,6 +265,9 @@
                             temp: parseInt(device.Temp, 10),
                             pressure: parseInt(device.Barometer, 10)
                         });
+
+                        // Do not continue. This way, no duplicate
+                        return;
                     }
 
                     if (device.hasOwnProperty('Humidity')) {
