@@ -331,6 +331,10 @@
                     if (idx === ID_MANUAL_WATERING) {
                         allData.humidity.watering = device.Status === 'On';
                     }
+
+                    if (idx === ID_WATER_LEVEL) {
+                        allData.humidity.waterLevel = device.Data;
+                    }
                 });
 
                 $rootScope.$broadcast('data_updated');
