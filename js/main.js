@@ -74,7 +74,8 @@
         refresh = function () {
             DataService.refreshData().then(function () {
                 getNeeded();
-                $mdToast.showSimple('Données rafraîchies');
+                // TODO: Less messages
+                //$mdToast.showSimple('Données rafraîchies');
             });
         };
 
