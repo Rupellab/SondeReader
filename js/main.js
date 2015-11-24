@@ -123,7 +123,7 @@
         self.setWaterSwitch = DataService.setWaterSwitch;
     }]);
 
-    app.factory('SettingsService', ['locker', function (locker) {
+    app.factory('SettingsService', ['locker', '$http', function (locker, $http) {
         var // Variables
             serverUrl,
             auth,
@@ -159,6 +159,10 @@
             if (authObj.hasAuth) {
                 locker.put(LS_KEY_USERNAME, authObj.username);
                 locker.put(LS_KEY_PASSWORD, authObj.password);
+                $http.defaults.headers.common.Authorization = 'Basic ' + window.btoa(
+                    authObj.username + ':' +
+                        authObj.password
+                );
             }
 
             auth = authObj;
@@ -239,10 +243,11 @@
             var deferred = $q.defer();
 
             $http({
-                method: 'GET',
+                method: 'JSONP',
                 url: getUrl() + 'json.htm',
                 headers: generateHeaders(),
                 params: {
+                    jsoncallback: 'JSON_CALLBACK',
                     type: 'devices'
                 }
             }).then(function onSuccess(r) {
@@ -305,10 +310,11 @@
 
         setWaterSwitch = function (bool) {
             $http({
-                method: 'GET',
+                method: 'JSONP',
                 url: getUrl() + 'json.htm',
                 headers: generateHeaders(),
                 params: {
+                    jsoncallback: 'JSON_CALLBACK',
                     type: 'command',
                     param: 'switchlight',
                     idx: switches[0],
@@ -318,10 +324,11 @@
         };
 
         $http({
-            method: 'GET',
+            method: 'JSONP',
             url: getUrl() + 'json.htm',
             headers: generateHeaders(),
             params: {
+                jsoncallback: 'JSON_CALLBACK',
                 type: 'command',
                 param: 'getlightswitches'
             }
