@@ -1,1 +1,34 @@
-<h2 class="md-headline">Détails de la sonde</h2>
+<h2 class="md-headline"
+    ng-if="mode === 'meteo'">
+    Détails de la sonde Météo
+</h2>
+
+<h2 class="md-headline"
+    ng-if="mode === 'watering'">
+    Détails de la sonde d'arrosage
+</h2>
+
+<section ng-if="mode === 'meteo'">
+    <p><strong>Température de l'air :</strong> {{ meteo.temp }} °C</p>
+
+    <p><strong>Humidité ambiante :</strong> {{ meteo.humidity }} %</p>
+
+    <p><strong>Pression atmosphérique :</strong> {{ meteo.pressure }} hpa</p>
+
+    <p><strong>Luminosité :</strong> {{ meteo.lux }}</p>
+</section>
+
+<section ng-if="mode === 'watering'">
+    <p><strong>Humidité de la terre :</strong> {{ humidity.humidity }} %</p>
+
+    <p>
+        <strong>Arrosage en cours :</strong>
+        <strong ng-if="current">Oui</strong>
+        <span ng-if="!current">Non</span>
+    </p>
+
+    <p>
+        <strong>Arrosage automatique :</strong>
+        {{ humidity.auto }}
+    </p>
+</section>

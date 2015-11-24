@@ -132,10 +132,19 @@
     ) {
         if ($stateParams.mode === 'meteo') {
             console.log('meteo mode');
+            DataService.getMeteo().then(function (r) {
+                self.meteo = r;
+            });
+
         } else if ($stateParams.mode === 'watering') {
             console.log('watering mode');
+
+            DataService.getHumidity().then(function (r) {
+                self.humidity = r;
+            });
         }
 
+        self.mode = $stateParams.mode;
         self.setWaterSwitch = DataService.setWaterSwitch;
     }]);
 
