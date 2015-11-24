@@ -16,20 +16,22 @@
 <h2 class="md-headline">Sonde Météo</h2>
 
 <md-list>
-    <md-list-item ng-repeat="m in meteo">
+    <md-list-item>
         <img src="http://lorempixel.com/150/150/"
              alt=""
              class="md-avatar"/>
 
         <div class="md-list-item-text">
-            <p><strong>Température de l'air :</strong> {{ m.temp }} °C</p>
+            <p><strong>Température de l'air :</strong> {{ meteo.temp }} °C</p>
 
-            <p><strong>Humidité ambiante :</strong> {{ m.humidity }} %</p>
+            <p><strong>Humidité ambiante :</strong> {{ meteo.humidity }} %</p>
 
-            <p><strong>Pression atmosphérique :</strong> {{ m.pressure }} hpa</p>
+            <p><strong>Pression atmosphérique :</strong> {{ meteo.pressure }} hpa</p>
+
+            <p><strong>Luminosité :</strong> {{ meteo.lux }}</p>
 
             <md-button class="md-raised md-secondary"
-                       ui-sref="detail({sondeId: m.id})">
+                       ui-sref="detail({sondeId: meteo.id})">
                 Détails
             </md-button>
         </div>

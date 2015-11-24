@@ -257,28 +257,31 @@
                     type: 'devices'
                 }
             }).then(function onSuccess(r) {
+                // TODO: Ugly, move this
+                function toInt(str) {
+                    return parseInt(str, 10);
+                }
+
                 allData = {
-                    meteo: [],
+                    meteo: {},
                     humidity: []
                 };
 
                 lastRefresh = Date.now();
 
                 r.data.result.forEach(function (device) {
-                    //console.log('devices', Object.keys(device));
+                    var idx = toInt(device.idx);
 
-                    if (device.hasOwnProperty('Humidity') &&
-                            device.hasOwnProperty('Barometer') &&
-                            device.hasOwnProperty('Temp')) {
-                        allData.meteo.push({
-                            id: parseInt(device.idx, 10),
-                            humidity: parseInt(device.Humidity, 10),
-                            temp: parseInt(device.Temp, 10),
-                            pressure: parseInt(device.Barometer, 10)
-                        });
+                    if (idx === ID_METEO) {
+                        allData.meteo.id = idx;
+                        allData.meteo.humidity = toInt(device.Humidity);
+                        allData.meteo.temp = toInt(device.Temp);
+                        allData.meteo.pressure = toInt(device.Barometer);
 
-                        // Do not continue. This way, no duplicate
-                        return;
+                    }
+
+                    if (idx === ID_LUX) {
+                        allData.meteo.lux = device.Data;
                     }
 
                     if (device.hasOwnProperty('Humidity')) {
