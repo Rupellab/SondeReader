@@ -43,19 +43,24 @@
 <h2 class="md-headline">Sondes Arrosage</h2>
 
 <md-list>
-    <md-list-item ng-repeat="h in humidity">
+    <md-list-item>
         <img src="http://lorempixel.com/151/151/"
              alt=""
              class="md-avatar"/>
 
         <div class="md-list-item-text"
              ng-init="current = false">
-            <p><strong>Humidité de la terre :</strong> {{ h.humidity }} %</p>
+            <p><strong>Humidité de la terre :</strong> {{ humidity.humidity }} %</p>
 
             <p>
                 <strong>Arrosage en cours :</strong>
                 <strong ng-if="current">Oui</strong>
                 <span ng-if="!current">Non</span>
+            </p>
+
+            <p>
+                <strong>Arrosage automatique :</strong>
+                {{ humidity.auto }}
             </p>
 
             <md-button class="md-raised md-secondary"

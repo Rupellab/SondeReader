@@ -264,7 +264,7 @@
 
                 allData = {
                     meteo: {},
-                    humidity: []
+                    humidity: {}
                 };
 
                 lastRefresh = Date.now();
@@ -284,11 +284,13 @@
                         allData.meteo.lux = device.Data;
                     }
 
-                    if (device.hasOwnProperty('Humidity')) {
-                        allData.humidity.push({
-                            id: parseInt(device.idx, 10),
-                            humidity: parseInt(device.Humidity, 10)
-                        });
+                    if (idx === ID_GROUND_HUMIDITY) {
+                        allData.humidity.id = toInt(idx);
+                        allData.humidity.humidity = toInt(device.Humidity);
+                    }
+
+                    if (idx === ID_AUTO_WATERING) {
+                        allData.humidity.auto = device.Status + ' (' + device.Level + '%)';
                     }
                 });
 
