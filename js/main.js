@@ -5,6 +5,12 @@
     'use strict';
 
     var // Constants
+        ID_METEO = 6,
+        ID_LUX = 7,
+        ID_AUTO_WATERING = 9,
+        ID_WATER_LEVEL = 13,
+        ID_GROUND_HUMIDITY = 10,
+        ID_MANUAL_WATERING = 14,
         LS_KEY_URL = 'serverUrl',
         LS_KEY_HAS_AUTH = 'hasAuth',
         LS_KEY_USERNAME = 'authUsername',
