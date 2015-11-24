@@ -131,22 +131,36 @@
         $stateParams,
         DataService
     ) {
-        if ($stateParams.mode === 'meteo') {
-            console.log('meteo mode');
+        var // Functions
+            meteoAction,
+            wateringAction,
+            allAction;
+
+        meteoAction = function () {
             DataService.getMeteo().then(function (r) {
                 self.meteo = r;
             });
+        };
 
-        } else if ($stateParams.mode === 'watering') {
-            console.log('watering mode');
-
+        wateringAction = function () {
             DataService.getHumidity().then(function (r) {
                 self.humidity = r;
             });
-        }
+        };
 
+        allAction = function () {
+            if ($stateParams.mode === 'meteo') {
+                meteoAction();
+            } else if ($stateParams.mode === 'watering') {
+                wateringAction();
+            }
+        };
+
+        allAction();
         self.mode = $stateParams.mode;
         self.setWaterSwitch = DataService.setWaterSwitch;
+
+        self.$on('data_updated', allAction);
     }]);
 
     app.factory('SettingsService', ['locker', '$http', function (locker, $http) {
@@ -216,8 +230,9 @@
         };
     }]);
 
-    app.factory('DataService', ['$http', '$q', '$mdToast', 'SettingsService', function (
+    app.factory('DataService', ['$http', '$rootScope', '$q', '$mdToast', 'SettingsService', function (
         $http,
+        $rootScope,
         $q,
         $mdToast,
         SettingsService
@@ -314,6 +329,7 @@
                     }
                 });
 
+                $rootScope.$broadcast('data_updated');
                 deferred.resolve(allData);
             }, function onError() {
                 $mdToast.showSimple('Impossible de récupérer les données !');
