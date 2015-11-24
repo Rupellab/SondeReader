@@ -10,7 +10,7 @@
         ID_AUTO_WATERING = 9,
         ID_WATER_LEVEL = 13,
         ID_GROUND_HUMIDITY = 10,
-        ID_MANUAL_WATERING = 14,
+        ID_MANUAL_WATERING = 8,
         LS_KEY_URL = 'serverUrl',
         LS_KEY_HAS_AUTH = 'hasAuth',
         LS_KEY_USERNAME = 'authUsername',
@@ -327,6 +327,10 @@
                     if (idx === ID_AUTO_WATERING) {
                         allData.humidity.auto = device.Status + ' (' + device.Level + '%)';
                     }
+
+                    if (idx === ID_MANUAL_WATERING) {
+                        allData.humidity.watering = device.Status === 'On';
+                    }
                 });
 
                 $rootScope.$broadcast('data_updated');
@@ -367,6 +371,15 @@
                     idx: switches[0],
                     switchcmd: bool ? 'On' : 'Off'
                 }
+            }).then(function onSuccess(r) {
+                if (r.data.status === 'ERROR') {
+                    $mdToast.showSimple('Impossible d\'exécuter l\'action demandée.');
+                    return;
+                }
+
+                refreshData();
+            }, function onError() {
+                $mdToast.showSimple('Impossible d\'exécuter l\'action demandée.');
             });
         };
 
