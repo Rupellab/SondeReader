@@ -31,7 +31,7 @@
             <p><strong>Luminosité :</strong> {{ meteo.lux }}</p>
 
             <md-button class="md-raised md-secondary"
-                       ui-sref="detail({sondeId: meteo.id})">
+                       ui-sref="detail({mode: 'meteo'})">
                 Détails
             </md-button>
         </div>
@@ -64,7 +64,7 @@
             </p>
 
             <md-button class="md-raised md-secondary"
-                       ui-sref="detail({sondeId: h.id})">
+                       ui-sref="detail({mode: 'watering'})">
                 Détails
             </md-button>
         </div>

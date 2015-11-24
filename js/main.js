@@ -43,7 +43,7 @@
         });
 
         $stateProvider.state('detail', {
-            url: '/detail/:sondeId',
+            url: '/detail/:mode',
             controller: 'DetailController',
             templateUrl: 'partials/detail.html'
         });
@@ -125,7 +125,17 @@
         });
     }]);
 
-    app.controller('DetailController', ['$scope', 'DataService', function (self, DataService) {
+    app.controller('DetailController', ['$scope', '$stateParams', 'DataService', function (
+        self,
+        $stateParams,
+        DataService
+    ) {
+        if ($stateParams.mode === 'meteo') {
+            console.log('meteo mode');
+        } else if ($stateParams.mode === 'watering') {
+            console.log('watering mode');
+        }
+
         self.setWaterSwitch = DataService.setWaterSwitch;
     }]);
 
