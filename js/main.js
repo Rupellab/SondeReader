@@ -159,6 +159,8 @@
         allAction();
         self.mode = $stateParams.mode;
         self.setWaterSwitch = DataService.setWaterSwitch;
+        self.setWaterAuto = DataService.setWaterAuto;
+        self.setWaterThreshold = DataService.setWaterThreshold;
 
         self.$on('data_updated', allAction);
     }]);
@@ -239,7 +241,6 @@
     ) {
         var // Variables
             allData = null,
-            switches = [],
             lastRefresh,
 
             // Functions
@@ -250,7 +251,9 @@
             getMeteo,
             getHumidity,
             getLastRefresh,
-            setWaterSwitch;
+            setWaterSwitch,
+            setWaterAuto,
+            setWaterThreshold;
 
         generateHeaders = function () {
             if (SettingsService.getAuth().hasAuth) {
@@ -325,7 +328,8 @@
                     }
 
                     if (idx === ID_AUTO_WATERING) {
-                        allData.humidity.auto = device.Status + ' (' + device.Level + '%)';
+                        allData.humidity.autoBool = device.Status === 'On';
+                        allData.humidity.autoThreshold = toInt(device.Level);
                     }
 
                     if (idx === ID_MANUAL_WATERING) {
@@ -372,7 +376,7 @@
                     jsoncallback: 'JSON_CALLBACK',
                     type: 'command',
                     param: 'switchlight',
-                    idx: switches[0],
+                    idx: ID_MANUAL_WATERING,
                     switchcmd: bool ? 'On' : 'Off'
                 }
             }).then(function onSuccess(r) {
@@ -387,27 +391,63 @@
             });
         };
 
-        $http({
-            method: 'JSONP',
-            url: getUrl() + 'json.htm',
-            headers: generateHeaders(),
-            params: {
-                jsoncallback: 'JSON_CALLBACK',
-                type: 'command',
-                param: 'getlightswitches'
-            }
-        }).then(function (r) {
-            r.data.result.forEach(function (waterSwitch) {
-                switches.push(waterSwitch.idx);
+        setWaterAuto = function (bool) {
+            $http({
+                method: 'JSONP',
+                url: getUrl() + 'json.htm',
+                headers: generateHeaders(),
+                params: {
+                    jsoncallback: 'JSON_CALLBACK',
+                    type: 'command',
+                    param: 'switchlight',
+                    idx: ID_AUTO_WATERING,
+                    switchcmd: bool ? 'On' : 'Off'
+                }
+            }).then(function onSuccess(r) {
+                if (r.data.status === 'ERROR') {
+                    $mdToast.showSimple('Impossible d\'exécuter l\'action demandée.');
+                    return;
+                }
+
+                refreshData();
+            }, function onError() {
+                $mdToast.showSimple('Impossible d\'exécuter l\'action demandée.');
             });
-        });
+        };
+
+        setWaterThreshold = function (val) {
+            $http({
+                method: 'JSONP',
+                url: getUrl() + 'json.htm',
+                headers: generateHeaders(),
+                params: {
+                    jsoncallback: 'JSON_CALLBACK',
+                    type: 'command',
+                    param: 'switchlight',
+                    idx: ID_AUTO_WATERING,
+                    switchcmd: 'Set Level',
+                    level: val
+                }
+            }).then(function onSuccess(r) {
+                if (r.data.status === 'ERROR') {
+                    $mdToast.showSimple('Impossible d\'exécuter l\'action demandée.');
+                    return;
+                }
+
+                refreshData();
+            }, function onError() {
+                $mdToast.showSimple('Impossible d\'exécuter l\'action demandée.');
+            });
+        };
 
         return {
             refreshData: refreshData,
             getMeteo: getMeteo,
             getHumidity: getHumidity,
             getLastRefresh: getLastRefresh,
-            setWaterSwitch: setWaterSwitch
+            setWaterSwitch: setWaterSwitch,
+            setWaterAuto: setWaterAuto,
+            setWaterThreshold: setWaterThreshold
         };
     }]);
 }(angular));

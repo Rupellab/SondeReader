@@ -51,8 +51,7 @@
              alt=""
              class="md-avatar"/>
 
-        <div class="md-list-item-text"
-             ng-init="current = false">
+        <div class="md-list-item-text">
             <p>
                 <strong>Humidité de la terre :</strong>
                 {{ humidity.humidity }} %
@@ -66,7 +65,8 @@
 
             <p>
                 <strong>Arrosage automatique :</strong>
-                {{ humidity.auto }}
+                {{ humidity.autoBool ? 'Oui' : 'Non' }}
+                ({{ humidity.autoThreshold }}%)
             </p>
 
             <md-button class="md-raised md-secondary"

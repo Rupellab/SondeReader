@@ -32,7 +32,8 @@
 
     <p>
         <strong>Arrosage automatique :</strong>
-        {{ humidity.auto }}
+        {{ humidity.autoBool ? 'Oui' : 'Non' }}
+        ({{ humidity.autoThreshold }}%)
     </p>
 
     <md-button class="md-raised md-secondary"
@@ -40,4 +41,31 @@
                ng-click="setWaterSwitch(true)">
         Lancer l'arrosage manuel (15 s.)
     </md-button>
+
+    <md-divider></md-divider>
+
+    <md-checkbox class="auto-watering-checkbox"
+                 ng-model="humidity.autoBool"
+                 ng-change="setWaterAuto(humidity.autoBool)"
+                 aria-label="Arrosage automatique">
+        Arrosage automatique
+    </md-checkbox>
+
+    <h4>Seuil d'arrosage automatique</h4>
+    <div layout class="auto-watering">
+        <md-slider flex
+                   min="1"
+                   max="100"
+                   ng-model="humidity.autoThreshold"
+                   ng-change="setWaterThreshold(humidity.autoThreshold)"
+                   aria-label="Seuil d'arrosage automatique">
+        </md-slider>
+
+        <div flex="25" layout layout-align="center center">
+            <input flex
+                   type="number"
+                   ng-model="humidity.autoThreshold"
+                   aria-label="Seuil d'arrosage automatique">
+        </div>
+    </div>
 </section>
