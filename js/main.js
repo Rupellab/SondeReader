@@ -23,7 +23,8 @@
     app = ng.module('SondeReader', [
         'ui.router',
         'ngMaterial',
-        'angular-locker'
+        'angular-locker',
+        'highcharts-ng'
     ]);
 
     app.config(['$stateProvider', '$urlRouterProvider', function (
@@ -251,6 +252,7 @@
             getMeteo,
             getHumidity,
             getLastRefresh,
+            getChartData,
             setWaterSwitch,
             setWaterAuto,
             setWaterThreshold;
@@ -367,6 +369,30 @@
             return lastRefresh;
         };
 
+        getChartData = function (sondeId, type) {
+            return $http({
+                method: 'JSONP',
+                url: getUrl() + 'json.htm',
+                headers: generateHeaders(),
+                params: {
+                    jsoncallback: 'JSON_CALLBACK',
+                    type: 'graph',
+                    sensor: type,
+                    idx: sondeId,
+                    range: 'month' // Todo: Ability to set this
+                }
+            }).then(function onSuccess(r) {
+                if (r.data.status === 'ERROR') {
+                    $mdToast.showSimple('Impossible de récupérer les données du graphique.');
+                    return;
+                }
+
+                return r.data.result;
+            }, function onError() {
+                $mdToast.showSimple('Impossible de récupérer les données du graphique.');
+            });
+        };
+
         setWaterSwitch = function (bool) {
             $http({
                 method: 'JSONP',
@@ -445,9 +471,39 @@
             getMeteo: getMeteo,
             getHumidity: getHumidity,
             getLastRefresh: getLastRefresh,
+            getChartData: getChartData,
             setWaterSwitch: setWaterSwitch,
             setWaterAuto: setWaterAuto,
             setWaterThreshold: setWaterThreshold
+        };
+    }]);
+    app.directive('srChart', [function () {
+        var controller;
+
+        controller = ['$scope', '$timeout', 'DataService', function (self, $timeout, DataService) {
+            // Todo: $timeout = quick & lazy fix -> please do better
+            $timeout(function () {
+                self.$apply(function () {
+                    DataService.getChartData(self.sonde, self.type).then(function (data) {
+                        self.chartConfig = {
+                            title: {
+                                text: 'Hello'
+                            },
+                            series: data
+                        };
+                    });
+                });
+            }, 500);
+        }];
+
+        return {
+            template: '<highchart config="chartConfig"></highchart>',
+            scope: {
+                sonde: '=',
+                type: '@'
+            },
+            restrict: 'E',
+            controller: controller
         };
     }]);
 }(angular));
