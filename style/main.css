@@ -7,3 +7,48 @@
 md-divider {
   margin: 20px 0;
 }
+
+md-list-item {
+  padding-left: 0 !important;
+}
+
+md-content {
+  padding-top: 0 !important;
+  padding-bottom: 20px !important;
+}
+
+@media (max-width: 720px) {
+  /* Todo: Use stuff provided by Angular Material... */
+  .md-list-item-text {
+    flex-grow: 1;
+    position: relative;
+    margin-bottom: 25px !important;
+  }
+
+  .md-list-item-text a {
+    margin: 10px 0 0;
+    flex-grow: 0;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: auto;
+  }
+
+}
+
+.md-avatar {
+  text-align: center;
+  margin-right: 25px !important;
+}
+
+.md-avatar i {
+  font-size: 45px !important;
+}
+
+.fa-sun-o {
+  color: #eeff41;
+}
+
+.fa-tint {
+  color: #0091ea;
+}
