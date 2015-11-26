@@ -17,10 +17,22 @@
 
     <p><strong>Luminosité :</strong> {{ meteo.lux }}</p>
 
-    <h4>Graphique météo</h4>
+    <md-divider></md-divider>
+
+    <h4>Graphique de la température</h4>
     <sr-chart sonde="meteo.id"
               type="temp"
               parser="meteoParser"></sr-chart>
+
+    <h4>Graphique de la pression atmosphérique</h4>
+    <sr-chart sonde="meteo.id"
+              type="temp"
+              parser="pressureParser"></sr-chart>
+
+    <h4>Graphique de l'humidité ambiante</h4>
+    <sr-chart sonde="meteo.id"
+              type="temp"
+              parser="humidityParser"></sr-chart>
 </section>
 
 <section ng-if="mode === 'watering'">

@@ -16,9 +16,22 @@
         LS_KEY_USERNAME = 'authUsername',
         LS_KEY_PASSWORD = 'authPassword',
         REFRESH_INTERVAL = 20 * 1000, // Every 20 seconds
+        BASE_HC_CONFIG,
 
         // Variables
         app;
+
+    BASE_HC_CONFIG = {
+        xAxis: {
+            categories: []
+        },
+        yAxis: {
+            title: {
+                text: null
+            }
+        },
+        series: []
+    };
 
     app = ng.module('SondeReader', [
         'ui.router',
@@ -136,6 +149,8 @@
             meteoAction,
             wateringAction,
             meteoParser,
+            pressureParser,
+            humidityParser,
             allAction;
 
         meteoAction = function () {
@@ -162,13 +177,8 @@
             var out,
                 dataTemperature = [];
 
-            out = {
-                xAxis: {
-                    categories: []
-                },
-                yAxis: {},
-                series: []
-            };
+            out = ng.copy(BASE_HC_CONFIG);
+            out.yAxis.title.text = 'Température';
 
             input.forEach(function (chartEntry) {
                 out.xAxis.categories.push(chartEntry.d);
@@ -183,9 +193,51 @@
             return out;
         };
 
+        pressureParser = function (input) {
+            var out,
+                dataPressure = [];
+
+            out = ng.copy(BASE_HC_CONFIG);
+            out.yAxis.title.text = 'Pression atmosphérique';
+
+            input.forEach(function (chartEntry) {
+                out.xAxis.categories.push(chartEntry.d);
+                dataPressure.push(parseFloat(chartEntry.ba));
+            });
+
+            out.series.push({
+                name: 'Pression atmosphérique (hpa)',
+                data: dataPressure
+            });
+
+            return out;
+        };
+
+        humidityParser = function (input) {
+            var out,
+                data = [];
+
+            out = ng.copy(BASE_HC_CONFIG);
+            out.yAxis.title.text = 'Humidité';
+
+            input.forEach(function (chartEntry) {
+                out.xAxis.categories.push(chartEntry.d);
+                data.push(parseFloat(chartEntry.hu));
+            });
+
+            out.series.push({
+                name: 'Humidité',
+                data: data
+            });
+
+            return out;
+        };
+
         allAction();
         self.mode = $stateParams.mode;
         self.meteoParser = meteoParser;
+        self.pressureParser = pressureParser;
+        self.humidityParser = humidityParser;
         self.setWaterSwitch = DataService.setWaterSwitch;
         self.setWaterAuto = DataService.setWaterAuto;
         self.setWaterThreshold = DataService.setWaterThreshold;
@@ -513,8 +565,11 @@
                 self.$apply(function () {
                     DataService.getChartData(self.sonde, self.type).then(function (data) {
                         self.chartConfig = ng.extend({
+                            chart: {
+                                zoomType: 'xy'
+                            },
                             title: {
-                                text: 'Température'
+                                text: null
                             }
                         }, self.parser(data));
                     });
