@@ -85,4 +85,11 @@
                    aria-label="Seuil d'arrosage automatique">
         </div>
     </div>
+
+    <md-divider></md-divider>
+
+    <h4>Historique de l'humidité</h4>
+    <sr-chart sonde="humidity.id"
+              type="temp"
+              parser="humidityParser"></sr-chart>
 </section>
