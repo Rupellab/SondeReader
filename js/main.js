@@ -135,6 +135,7 @@
         var // Functions
             meteoAction,
             wateringAction,
+            meteoParser,
             allAction;
 
         meteoAction = function () {
@@ -157,8 +158,34 @@
             }
         };
 
+        meteoParser = function (input) {
+            var out,
+                dataTemperature = [];
+
+            out = {
+                xAxis: {
+                    categories: []
+                },
+                yAxis: {},
+                series: []
+            };
+
+            input.forEach(function (chartEntry) {
+                out.xAxis.categories.push(chartEntry.d);
+                dataTemperature.push(chartEntry.ta);
+            });
+
+            out.series.push({
+                name: 'Température (°C)',
+                data: dataTemperature
+            });
+
+            return out;
+        };
+
         allAction();
         self.mode = $stateParams.mode;
+        self.meteoParser = meteoParser;
         self.setWaterSwitch = DataService.setWaterSwitch;
         self.setWaterAuto = DataService.setWaterAuto;
         self.setWaterThreshold = DataService.setWaterThreshold;
@@ -485,12 +512,11 @@
             $timeout(function () {
                 self.$apply(function () {
                     DataService.getChartData(self.sonde, self.type).then(function (data) {
-                        self.chartConfig = {
+                        self.chartConfig = ng.extend({
                             title: {
-                                text: 'Hello'
-                            },
-                            series: data
-                        };
+                                text: 'Température'
+                            }
+                        }, self.parser(data));
                     });
                 });
             }, 500);
@@ -500,7 +526,8 @@
             template: '<highchart config="chartConfig"></highchart>',
             scope: {
                 sonde: '=',
-                type: '@'
+                type: '@',
+                parser: '='
             },
             restrict: 'E',
             controller: controller
